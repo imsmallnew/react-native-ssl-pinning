@@ -2,6 +2,7 @@ package com.toyberman.Utils;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
@@ -25,6 +26,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.HostnameVerifier;
 
 import okhttp3.CookieJar;
 import okhttp3.MediaType;
@@ -101,6 +104,13 @@ public class OkHttpUtils {
             client = clientBuilder
                     .cookieJar(cookieJar)
                     .sslSocketFactory(sslContext.getSocketFactory())
+                    .hostnameVerifier(new HostnameVerifier() {
+                        @Override
+                        public boolean verify(String hostname, SSLSession session) {
+                            Log.d("Hostname: ", hostname);
+                            return true;
+                        }
+                    })
                     .build();
 
         }
