@@ -93,7 +93,9 @@ public class OkHttpUtils {
             if (options.hasKey("timeoutInterval")) {
                 int timeout = options.getInt("timeoutInterval");
                 clientBuilder
-                        .readTimeout(timeout, TimeUnit.MILLISECONDS);
+                        .readTimeout(timeout, TimeUnit.MILLISECONDS)
+                        .writeTimeout(timeout, TimeUnit.MILLISECONDS)
+                        .connectTimeout(timeout, TimeUnit.MILLISECONDS);
             }
 
 
