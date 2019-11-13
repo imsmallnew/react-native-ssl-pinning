@@ -96,7 +96,12 @@ public class OkHttpUtils {
                         .readTimeout(timeout, TimeUnit.MILLISECONDS)
                         .writeTimeout(timeout, TimeUnit.MILLISECONDS)
                         .connectTimeout(timeout, TimeUnit.MILLISECONDS);
-            }
+            }else {
+                clientBuilder
+                        .readTimeout(600000, TimeUnit.MILLISECONDS)
+                        .writeTimeout(600000, TimeUnit.MILLISECONDS)
+                        .connectTimeout(600000, TimeUnit.MILLISECONDS);
+              }
 
 
             if (BuildConfig.DEBUG) {
