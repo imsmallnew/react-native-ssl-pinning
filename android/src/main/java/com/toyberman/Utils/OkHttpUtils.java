@@ -98,9 +98,9 @@ public class OkHttpUtils {
                         .connectTimeout(timeout, TimeUnit.MILLISECONDS);
             }else {
                 clientBuilder
-                        .readTimeout(600000, TimeUnit.MILLISECONDS)
-                        .writeTimeout(600000, TimeUnit.MILLISECONDS)
-                        .connectTimeout(600000, TimeUnit.MILLISECONDS);
+                        .readTimeout(10000, TimeUnit.MILLISECONDS)
+                        .writeTimeout(10000, TimeUnit.MILLISECONDS)
+                        .connectTimeout(10000, TimeUnit.MILLISECONDS);
               }
 
 

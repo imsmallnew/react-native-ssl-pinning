@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Cookie;
@@ -185,31 +186,68 @@ public class RNSslPinningModule extends ReactContextBaseJavaModule {
         }
 
         try {
-            Request request = OkHttpUtils.buildRequest(this.reactContext, options, hostname);
 
-            client.newCall(request).enqueue(new okhttp3.Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    callback.invoke(e.getMessage());
-                }
+          if (options.hasKey("timeoutInterval")) {
+            int timeout = options.getInt("timeoutInterval");
+              OkHttpClient client1 = client.newBuilder()
+                    .readTimeout(timeout, TimeUnit.MILLISECONDS)
+                    .writeTimeout(timeout, TimeUnit.MILLISECONDS)
+                    .connectTimeout(timeout, TimeUnit.MILLISECONDS).build();
+              Request request = OkHttpUtils.buildRequest(this.reactContext, options, hostname);
 
-                @Override
-                public void onResponse(Call call, Response okHttpResponse) throws IOException {
-                    String stringResponse = okHttpResponse.body().string();
-                    //build response headers map
-                    WritableMap headers = buildResponseHeaders(okHttpResponse);
-                    //set response status code
-                    response.putInt("status", okHttpResponse.code());
-                    response.putString("bodyString", stringResponse);
-                    response.putMap("headers", headers);
+              client1.newCall(request).enqueue(new okhttp3.Callback() {
+                  @Override
+                  public void onFailure(Call call, IOException e) {
+                      callback.invoke(e.getMessage());
+                  }
 
-                    if (okHttpResponse.isSuccessful()) {
-                        callback.invoke(null, response);
-                    } else {
-                        callback.invoke(response, null);
-                    }
-                }
-            });
+                  @Override
+                  public void onResponse(Call call, Response okHttpResponse) throws IOException {
+                      String stringResponse = okHttpResponse.body().string();
+                      //build response headers map
+                      WritableMap headers = buildResponseHeaders(okHttpResponse);
+                      //set response status code
+                      response.putInt("status", okHttpResponse.code());
+                      response.putString("bodyString", stringResponse);
+                      response.putMap("headers", headers);
+
+                      if (okHttpResponse.isSuccessful()) {
+                          callback.invoke(null, response);
+                      } else {
+                          callback.invoke(response, null);
+                      }
+                  }
+              });
+        } else {
+              Request request = OkHttpUtils.buildRequest(this.reactContext, options, hostname);
+
+              client.newCall(request).enqueue(new okhttp3.Callback() {
+                  @Override
+                  public void onFailure(Call call, IOException e) {
+                      callback.invoke(e.getMessage());
+                  }
+
+                  @Override
+                  public void onResponse(Call call, Response okHttpResponse) throws IOException {
+                      String stringResponse = okHttpResponse.body().string();
+                      //build response headers map
+                      WritableMap headers = buildResponseHeaders(okHttpResponse);
+                      //set response status code
+                      response.putInt("status", okHttpResponse.code());
+                      response.putString("bodyString", stringResponse);
+                      response.putMap("headers", headers);
+
+                      if (okHttpResponse.isSuccessful()) {
+                          callback.invoke(null, response);
+                      } else {
+                          callback.invoke(response, null);
+                      }
+                  }
+              });
+          }
+
+
+
 
 
         } catch (JSONException e) {
