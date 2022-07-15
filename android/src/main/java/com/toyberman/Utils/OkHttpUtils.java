@@ -21,13 +21,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.X509TrustManager;
 
 import okhttp3.CookieJar;
 import okhttp3.MediaType;
@@ -110,7 +113,22 @@ public class OkHttpUtils {
 
             client = clientBuilder
                     .cookieJar(cookieJar)
-                    .sslSocketFactory(sslContext.getSocketFactory())
+                    .sslSocketFactory(sslContext.getSocketFactory(),new X509TrustManager() {
+                        @Override
+                        public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+
+                        }
+
+                        @Override
+                        public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+
+                        }
+
+                        @Override
+                        public X509Certificate[] getAcceptedIssuers() {
+                            return new X509Certificate[0];
+                        }
+                    })
                     .hostnameVerifier(new HostnameVerifier() {
                         @Override
                         public boolean verify(String hostname, SSLSession session) {
